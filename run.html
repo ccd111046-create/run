@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>加油!</title>
+<style>
+body{font-family:Arial;text-align:center;background:#eef4ff}
+h1{margin-top:20px}
+#raceArea{width:900px;margin:30px auto;position:relative}
+.lane{border-bottom:2px dashed #bbb;height:90px;position:relative;margin-bottom:10px}
+.horse{font-size:50px;position:absolute;left:0;top:30px;transition:left 1.2s}
+.horseName{position:absolute;left:60px;top:10px;font-weight:bold;color:#333}
+.finish{position:absolute;right:0;top:0;height:100%;width:6px;background:red}
+.controls{margin-top:10px}
+input{padding:8px;font-size:16px;width:200px}
+button{padding:8px 16px;font-size:16px;margin-left:5px;margin-top:5px}
+.count{margin-top:5px;font-size:14px}
+.name{margin-bottom:5px}
+#winner{font-size:26px;margin-top:25px;color:green}
+</style>
+</head>
+<body>
+
+<h1>🏇 加油!</h1>
+<p>先幫每隻馬取名字，再輸入鼓勵的話。鼓勵越多，最後跑越遠！</p>
+
+<div id="raceArea">
+<div class="finish"></div>
+
+<div class="lane">
+<div id="laneName1" class="horseName"></div>
+<div id="horse1" class="horse">🐎</div>
+</div>
+
+<div class="lane">
+<div id="laneName2" class="horseName"></div>
+<div id="horse2" class="horse">🐎</div>
+</div>
+
+<div class="lane">
+<div id="laneName3" class="horseName"></div>
+<div id="horse3" class="horse">🐎</div>
+</div>
+
+</div>
+
+<div class="controls">
+
+<div>
+<div class="name">名字：<input id="name1" placeholder="1號馬名字" oninput="updateLaneName(0)"></div>
+<input id="input1" placeholder="鼓勵1號馬...">
+<button onclick="encourage(0)">鼓勵</button>
+<div class="count">鼓勵次數：<span id="count1">0</span></div>
+</div>
+
+<div>
+<div class="name">名字：<input id="name2" placeholder="2號馬名字" oninput="updateLaneName(1)"></div>
+<input id="input2" placeholder="鼓勵2號馬...">
+<button onclick="encourage(1)">鼓勵</button>
+<div class="count">鼓勵次數：<span id="count2">0</span></div>
+</div>
+
+<div>
+<div class="name">名字：<input id="name3" placeholder="3號馬名字" oninput="updateLaneName(2)"></div>
+<input id="input3" placeholder="鼓勵3號馬...">
+<button onclick="encourage(2)">鼓勵</button>
+<div class="count">鼓勵次數：<span id="count3">0</span></div>
+</div>
+
+<br>
+<button onclick="finishRace()">🏁 結算比賽</button>
+<button onclick="restartGame()">🔄 重新開始</button>
+
+</div>
+
+<div id="winner"></div>
+
+<script>
+
+let counts=[0,0,0]
+let distances=[0,0,0]
+
+function getHorseName(i){
+let name=document.getElementById('name'+(i+1)).value.trim()
+if(name==='') return (i+1)+'號馬'
+return name
+}
+
+function updateLaneName(i){
+let name=getHorseName(i)
+document.getElementById('laneName'+(i+1)).innerText=name
+}
+
+function encourage(i){
+
+let input=document.getElementById('input'+(i+1))
+
+if(input.value.trim()==='') return
+
+counts[i]++
+
+document.getElementById('count'+(i+1)).innerText=counts[i]
+
+input.value=''
+
+}
+
+function finishRace(){
+
+for(let i=0;i<3;i++){
+  distances[i]=counts[i]*40 + Math.random()*40
+}
+
+for(let i=0;i<3;i++){
+  let horse=document.getElementById('horse'+(i+1))
+  horse.style.left=distances[i]+'px'
+}
+
+let max=Math.max(...distances)
+
+let winners=[]
+for(let i=0;i<distances.length;i++){
+  if(distances[i]===max){
+    winners.push(i)
+  }
+}
+
+let text='🏆 '
+
+if(winners.length===1){
+  text+= getHorseName(winners[0]) +' 獲勝！'
+}else{
+  text+='平手！ '
+  winners.forEach(w=>{text+= getHorseName(w)+' '})
+  text+='並列第一！'
+}
+
+setTimeout(()=>{
+
+winners.forEach((w)=>{
+
+let horse=document.getElementById('horse'+(w+1))
+let jump=0
+
+let anim=setInterval(()=>{
+
+horse.style.transform='translateY(-20px)'
+setTimeout(()=>{horse.style.transform='translateY(0)'},200)
+
+jump++
+if(jump>6) clearInterval(anim)
+
+},300)
+
+})
+
+},1200)
+
+
+document.getElementById('winner').innerText=text
+
+}
+
+function restartGame(){
+
+counts=[0,0,0]
+distances=[0,0,0]
+
+for(let i=1;i<=3;i++){
+
+let horse=document.getElementById('horse'+i)
+horse.style.left='0px'
+horse.style.transform='translateY(0)'
+
+document.getElementById('count'+i).innerText=0
+
+document.getElementById('input'+i).value=''
+
+document.getElementById('name'+i).value=''
+
+document.getElementById('laneName'+i).innerText=''
+
+}
+
+document.getElementById('winner').innerText=''
+
+}
+
+</script>
+
+</body>
+</html>
