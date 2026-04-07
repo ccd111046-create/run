@@ -12,21 +12,17 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-
 background-image:url("background.png");
 background-size:cover;
 background-position:center;
-
-opacity:0.18;          /* 透明度 */
-z-index:-1;            /* 放在最底層 */
-pointer-events:none;   /* 不擋按鈕 */
-
+opacity:0.18;
+z-index:-1;
+pointer-events:none;
 }
 h1{margin-top:20px}
 
 #raceArea{width:900px;margin:30px auto;position:relative}
 
-/* 跑道 */
 .lane{
 height:110px;
 position:relative;
@@ -36,7 +32,6 @@ overflow:hidden;
 background:#f0f0f0;
 }
 
-/* 在跑道內移動的地面 (像小恐龍) */
 .lane::after{
 content:"";
 position:absolute;
@@ -55,7 +50,6 @@ from{background-position-x:0}
 to{background-position-x:-60px}
 }
 
-/* 雲朵 */
 .cloud{
 position:absolute;
 font-size:28px;
@@ -68,7 +62,6 @@ from{transform:translateX(900px)}
 to{transform:translateX(-200px)}
 }
 
-/* 仙人掌 */
 .cactus{
 position:absolute;
 bottom:20px;
@@ -81,7 +74,6 @@ from{transform:translateX(900px)}
 to{transform:translateX(-200px)}
 }
 
-/* 馬與名字 */
 .horseWrap{
 position:absolute;
 left:0;
@@ -100,22 +92,12 @@ border-radius:6px;
 box-shadow:0 0 3px rgba(0,0,0,0.2);
 }
 
-/* 馬 (有腳動畫) */
 .horse{
 height:70px;
 width:auto;
 display:block;
 }
 
-@keyframes horseRun{
-0%{transform:translateY(0)}
-50%{transform:translateY(-6px)}
-100%{transform:translateY(0)}
-}
-
-
-
-/* 終點旗 */
 .finishFlag{
 position:absolute;
 right:-5px;
@@ -135,7 +117,6 @@ button{padding:8px 16px;font-size:16px;margin-left:5px;margin-top:5px}
 
 #winner{font-size:26px;margin-top:25px;color:green}
 
-/* 彩帶 */
 .confetti{
 position:absolute;
 font-size:18px;
@@ -147,9 +128,31 @@ animation:fall 2s linear forwards;
 100%{transform:translateY(220px)}
 }
 
+/* 音樂按鈕 */
+#musicBtn{
+position:fixed;
+top:10px;
+right:10px;
+z-index:999;
+padding:8px 12px;
+border:none;
+border-radius:8px;
+background:#333;
+color:white;
+cursor:pointer;
+}
+
 </style>
 </head>
 <body>
+
+<!-- 音樂 -->
+<audio id="bgm" loop>
+  <source src="dance-with-steel-ball-run.mp3" type="audio/mpeg">
+</audio>
+
+<!-- 音樂按鈕 -->
+<button id="musicBtn" onclick="toggleMusic()">🔊 音樂開</button>
 
 <h1>🏇加油!</h1>
 <p>先幫每隻馬取名字，再輸入鼓勵的話。鼓勵越多，最後跑越遠！</p>
@@ -163,7 +166,7 @@ animation:fall 2s linear forwards;
 <div class="cactus">🌵</div>
 <div id="wrap1" class="horseWrap">
 <div id="laneName1" class="horseName"></div>
-<img class="horse" src="horse.gif.gif" alt="horse">
+<img class="horse" src="horse.gif.gif">
 </div>
 </div>
 
@@ -172,7 +175,7 @@ animation:fall 2s linear forwards;
 <div class="cactus" style="animation-delay:2s">🌵</div>
 <div id="wrap2" class="horseWrap">
 <div id="laneName2" class="horseName"></div>
-<img class="horse" src="horse.gif.gif" alt="horse">
+<img class="horse" src="horse.gif.gif">
 </div>
 </div>
 
@@ -181,7 +184,7 @@ animation:fall 2s linear forwards;
 <div class="cactus" style="animation-delay:4s">🌵</div>
 <div id="wrap3" class="horseWrap">
 <div id="laneName3" class="horseName"></div>
-<img class="horse" src="horse.gif.gif" alt="horse">
+<img class="horse" src="horse.gif.gif">
 </div>
 </div>
 
@@ -190,21 +193,21 @@ animation:fall 2s linear forwards;
 <div class="controls">
 
 <div>
-<div class="name">名字：<input id="name1" placeholder="1號馬名字" oninput="updateLaneName(0)"></div>
+<div class="name">名字：<input id="name1" oninput="updateLaneName(0)"></div>
 <input id="input1" placeholder="鼓勵1號馬...">
 <button onclick="encourage(0)">鼓勵</button>
 <div class="count">鼓勵次數：<span id="count1">0</span></div>
 </div>
 
 <div>
-<div class="name">名字：<input id="name2" placeholder="2號馬名字" oninput="updateLaneName(1)"></div>
+<div class="name">名字：<input id="name2" oninput="updateLaneName(1)"></div>
 <input id="input2" placeholder="鼓勵2號馬...">
 <button onclick="encourage(1)">鼓勵</button>
 <div class="count">鼓勵次數：<span id="count2">0</span></div>
 </div>
 
 <div>
-<div class="name">名字：<input id="name3" placeholder="3號馬名字" oninput="updateLaneName(2)"></div>
+<div class="name">名字：<input id="name3" oninput="updateLaneName(2)"></div>
 <input id="input3" placeholder="鼓勵3號馬...">
 <button onclick="encourage(2)">鼓勵</button>
 <div class="count">鼓勵次數：<span id="count3">0</span></div>
@@ -222,6 +225,32 @@ animation:fall 2s linear forwards;
 
 let counts=[0,0,0]
 let distances=[0,0,0]
+
+/* 音樂控制 */
+let isPlaying=false
+
+function toggleMusic(){
+  const music=document.getElementById("bgm")
+  const btn=document.getElementById("musicBtn")
+
+  if(isPlaying){
+    music.pause()
+    btn.innerText="🔇 音樂關"
+  }else{
+    music.play()
+    btn.innerText="🔊 音樂開"
+  }
+  isPlaying=!isPlaying
+}
+
+/* 自動播放（點擊一次觸發） */
+window.addEventListener("click", function startMusicOnce(){
+  const music=document.getElementById("bgm")
+  music.play()
+  isPlaying=true
+  document.getElementById("musicBtn").innerText="🔊 音樂開"
+  window.removeEventListener("click", startMusicOnce)
+})
 
 function getHorseName(i){
 let name=document.getElementById('name'+(i+1)).value.trim()
@@ -301,7 +330,6 @@ if(jump>6) clearInterval(anim)
 
 },1600)
 
-
 document.getElementById('winner').innerText=text
 }
 
@@ -317,16 +345,18 @@ let horse=document.querySelector('#wrap'+i+' .horse')
 horse.style.transform='translateY(0)'
 
 document.getElementById('count'+i).innerText=0
-
 document.getElementById('input'+i).value=''
-
 document.getElementById('name'+i).value=''
-
 document.getElementById('laneName'+i).innerText=''
 }
 
 document.getElementById('winner').innerText=''
 }
+
+</script>
+
+</body>
+</html>
 
 </script>
 
