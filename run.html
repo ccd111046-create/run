@@ -3,23 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <title>加油!</title>
+
 <style>
 body{font-family:Arial;text-align:center;background:#f7f7f7;overflow-x:hidden}
+
 body::before{
 content:"";
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
+position:fixed;top:0;left:0;width:100%;height:100%;
 background-image:url("background.png");
-background-size:cover;
-background-position:center;
-opacity:0.18;
-z-index:-1;
-pointer-events:none;
+background-size:cover;background-position:center;
+opacity:0.18;z-index:-1;
 }
-h1{margin-top:20px}
 
 #raceArea{width:900px;margin:30px auto;position:relative}
 
@@ -32,130 +26,118 @@ overflow:hidden;
 background:#f0f0f0;
 }
 
+/* 地面 */
 .lane::after{
 content:"";
 position:absolute;
-left:0;
-right:0;
 bottom:0;
 height:25px;
+left:0;right:0;
 background:repeating-linear-gradient(
 90deg,#444 0,#444 30px,transparent 30px,transparent 60px);
 animation:groundMove 1.2s linear infinite;
 opacity:0.35;
 }
-
 @keyframes groundMove{
 from{background-position-x:0}
 to{background-position-x:-60px}
 }
 
+/* 雲 */
 .cloud{
 position:absolute;
 font-size:28px;
 animation:cloudMove 20s linear infinite;
 opacity:0.5;
 }
-
 @keyframes cloudMove{
 from{transform:translateX(900px)}
 to{transform:translateX(-200px)}
 }
 
+/* 仙人掌 */
 .cactus{
 position:absolute;
 bottom:20px;
 font-size:28px;
 animation:cactusMove 6s linear infinite;
 }
-
 @keyframes cactusMove{
 from{transform:translateX(900px)}
 to{transform:translateX(-200px)}
 }
 
+/* 馬 */
 .horseWrap{
 position:absolute;
-left:0;
-top:30px;
+left:0;top:30px;
 display:flex;
 align-items:center;
 gap:10px;
-transition:left 1.6s ease-out;
+transition:left 0.4s ease-out;
 }
 
 .horseName{
-font-weight:bold;
 background:white;
 padding:2px 6px;
 border-radius:6px;
-box-shadow:0 0 3px rgba(0,0,0,0.2);
+font-weight:bold;
 }
 
-.horse{
-height:70px;
-width:auto;
-display:block;
-}
+.horse{height:70px}
 
 .finishFlag{
 position:absolute;
-right:-5px;
-top:-5px;
+right:-5px;top:-5px;
 font-size:48px;
 }
 
-.controls{margin-top:10px}
-
-input{padding:8px;font-size:16px;width:200px}
-
-button{padding:8px 16px;font-size:16px;margin-left:5px;margin-top:5px}
-
-.count{margin-top:5px;font-size:14px}
-
-.name{margin-bottom:5px}
-
-#winner{font-size:26px;margin-top:25px;color:green}
-
+/* 彩帶 */
 .confetti{
 position:absolute;
 font-size:18px;
 animation:fall 2s linear forwards;
 }
-
 @keyframes fall{
 0%{transform:translateY(-30px)}
 100%{transform:translateY(220px)}
 }
 
-/* 音樂按鈕 */
+/* 音樂 */
 #musicBtn{
 position:fixed;
 top:10px;
 right:10px;
 z-index:999;
-padding:8px 12px;
-border:none;
-border-radius:8px;
-background:#333;
-color:white;
-cursor:pointer;
 }
+
+/* 🎬 影片 */
+#videoBox{
+position:fixed;
+top:50%;left:50%;
+transform:translate(-50%,-50%);
+display:none;
+z-index:2000;
+}
+#videoBox video{
+width:500px;
+border-radius:12px;
+}
+
+#winner{font-size:26px;margin-top:20px;color:green}
 
 </style>
 </head>
+
 <body>
 
-<!-- 音樂 -->
 <audio id="bgm" loop>
-  <source src="dance-with-steel-ball-run.mp3" type="audio/mpeg">
+<source src="dance-with-steel-ball-run.mp3">
 </audio>
 
-<!-- 音樂按鈕 -->
-<button id="musicBtn" onclick="toggleMusic()">🔊 音樂開</button>
+<button id="musicBtn" onclick="toggleMusic()">🔊</button>
 
 <h1>🏇加油!</h1>
-<p>先幫每隻馬取名字，再輸入鼓勵的話。鼓勵越多，最後跑越遠！</p>
 
 <div id="raceArea">
 
@@ -190,104 +172,146 @@ cursor:pointer;
 
 </div>
 
-<div class="controls">
+<div>
 
 <div>
-<div class="name">名字：<input id="name1" oninput="updateLaneName(0)"></div>
-<input id="input1" placeholder="鼓勵1號馬...">
+名字：<input id="name1" oninput="updateLaneName(0)">
+<input id="input1">
 <button onclick="encourage(0)">鼓勵</button>
-<div class="count">鼓勵次數：<span id="count1">0</span></div>
+<span id="count1">0</span>
 </div>
 
 <div>
-<div class="name">名字：<input id="name2" oninput="updateLaneName(1)"></div>
-<input id="input2" placeholder="鼓勵2號馬...">
+名字：<input id="name2" oninput="updateLaneName(1)">
+<input id="input2">
 <button onclick="encourage(1)">鼓勵</button>
-<div class="count">鼓勵次數：<span id="count2">0</span></div>
+<span id="count2">0</span>
 </div>
 
 <div>
-<div class="name">名字：<input id="name3" oninput="updateLaneName(2)"></div>
-<input id="input3" placeholder="鼓勵3號馬...">
+名字：<input id="name3" oninput="updateLaneName(2)">
+<input id="input3">
 <button onclick="encourage(2)">鼓勵</button>
-<div class="count">鼓勵次數：<span id="count3">0</span></div>
+<span id="count3">0</span>
 </div>
 
-<br>
-<button onclick="finishRace()">🏁 結算比賽</button>
-<button onclick="restartGame()">🔄 重新開始</button>
+<button onclick="finishRace()">🏁結算比賽</button>
+<button onclick="restartGame()">重來</button>
 
 </div>
 
 <div id="winner"></div>
+
+<div id="videoBox">
+<video id="video" src="dio.mp4"></video>
+</div>
 
 <script>
 
 let counts=[0,0,0]
 let distances=[0,0,0]
 
-/* 音樂控制 */
+/* 音樂 */
 let isPlaying=false
-
 function toggleMusic(){
-  const music=document.getElementById("bgm")
-  const btn=document.getElementById("musicBtn")
-
-  if(isPlaying){
-    music.pause()
-    btn.innerText="🔇 音樂關"
-  }else{
-    music.play()
-    btn.innerText="🔊 音樂開"
-  }
-  isPlaying=!isPlaying
+let m=document.getElementById("bgm")
+isPlaying?m.pause():m.play()
+isPlaying=!isPlaying
 }
+window.addEventListener("click",()=>{
+document.getElementById("bgm").play()
+},{once:true})
 
-/* 自動播放（點擊一次觸發） */
-window.addEventListener("click", function startMusicOnce(){
-  const music=document.getElementById("bgm")
-  music.play()
-  isPlaying=true
-  document.getElementById("musicBtn").innerText="🔊 音樂開"
-  window.removeEventListener("click", startMusicOnce)
-})
-
+/* 名字 */
 function getHorseName(i){
 let name=document.getElementById('name'+(i+1)).value.trim()
-if(name==='') return (i+1)+'號馬'
-return name
+return name||((i+1)+'號馬')
 }
-
 function updateLaneName(i){
-let name=getHorseName(i)
-document.getElementById('laneName'+(i+1)).innerText=name
+document.getElementById('laneName'+(i+1)).innerText=getHorseName(i)
 }
 
+/* 🎬 影片 */
+function playVideo(){
+let box=document.getElementById("videoBox")
+let v=document.getElementById("video")
+
+box.style.display="block"
+v.currentTime=0
+v.play()
+
+setTimeout(()=>{
+box.style.display="none"
+v.pause()
+},2000)
+}
+
+/* 鼓勵（固定距離） */
 function encourage(i){
 let input=document.getElementById('input'+(i+1))
 if(input.value.trim()==='') return
+
 counts[i]++
 document.getElementById('count'+(i+1)).innerText=counts[i]
+
+let step=60
+distances[i]=counts[i]*step
+
+document.getElementById('wrap'+(i+1)).style.left=distances[i]+'px'
+
+input.value=''
+
+playVideo()
+}
+
+/* Enter 全部鼓勵 */
+document.addEventListener("keydown",function(e){
+if(e.key==="Enter"){
+
+for(let i=0;i<3;i++){
+let input=document.getElementById('input'+(i+1))
+
+if(input.value.trim()!==''){
+counts[i]++
+document.getElementById('count'+(i+1)).innerText=counts[i]
+
+let step=60
+distances[i]=counts[i]*step
+document.getElementById('wrap'+(i+1)).style.left=distances[i]+'px'
+
 input.value=''
 }
+}
 
+playVideo()
+}
+})
+
+/* 彩帶 */
+function showConfetti(i){
+let rect=document.getElementById('wrap'+(i+1)).getBoundingClientRect()
+
+for(let j=0;j<15;j++){
+let c=document.createElement('div')
+c.className='confetti'
+c.innerText='🎉'
+c.style.left=(rect.left+Math.random()*80)+'px'
+c.style.top=rect.top+'px'
+document.body.appendChild(c)
+setTimeout(()=>c.remove(),2000)
+}
+}
+
+/* 結算 */
 function finishRace(){
 
-for(let i=0;i<3;i++){
-  distances[i]=counts[i]*60
-}
-
-for(let i=0;i<3;i++){
-  let wrap=document.getElementById('wrap'+(i+1))
-  wrap.style.left=distances[i]+'px'
-}
-
-let max=Math.max(...distances)
+let max=Math.max(...counts)
 let winners=[]
 
-for(let i=0;i<distances.length;i++){
-if(distances[i]===max){
+for(let i=0;i<3;i++){
+if(counts[i]===max){
 winners.push(i)
+showConfetti(i)
 }
 }
 
@@ -296,54 +320,20 @@ let text='🏆 '
 if(winners.length===1){
 text+=getHorseName(winners[0])+' 獲勝！'
 }else{
-text+='平手！ '
-winners.forEach(w=>{text+=getHorseName(w)+' '})
-text+='並列第一！'
+let names=winners.map(w=>getHorseName(w))
+text+=names.join('、')+' 平手！'
 }
-
-setTimeout(()=>{
-
-winners.forEach((w)=>{
-
-let horse=document.querySelector('#wrap'+(w+1)+' .horse')
-let rect=document.getElementById('wrap'+(w+1)).getBoundingClientRect()
-
-for(let i=0;i<16;i++){
-let conf=document.createElement('div')
-conf.className='confetti'
-conf.innerText='🎉'
-conf.style.left=(rect.left+Math.random()*80)+'px'
-conf.style.top=(rect.top)+'px'
-document.body.appendChild(conf)
-setTimeout(()=>conf.remove(),2000)
-}
-
-let jump=0
-let anim=setInterval(()=>{
-horse.style.transform='translateY(-18px)'
-setTimeout(()=>{horse.style.transform='translateY(0)'},200)
-jump++
-if(jump>6) clearInterval(anim)
-},250)
-
-})
-
-},1600)
 
 document.getElementById('winner').innerText=text
 }
 
+/* 重來 */
 function restartGame(){
-
 counts=[0,0,0]
 distances=[0,0,0]
 
 for(let i=1;i<=3;i++){
-let wrap=document.getElementById('wrap'+i)
-wrap.style.left='0px'
-let horse=document.querySelector('#wrap'+i+' .horse')
-horse.style.transform='translateY(0)'
-
+document.getElementById('wrap'+i).style.left='0px'
 document.getElementById('count'+i).innerText=0
 document.getElementById('input'+i).value=''
 document.getElementById('name'+i).value=''
@@ -352,11 +342,6 @@ document.getElementById('laneName'+i).innerText=''
 
 document.getElementById('winner').innerText=''
 }
-
-</script>
-
-</body>
-</html>
 
 </script>
 
