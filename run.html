@@ -235,9 +235,17 @@ document.getElementById('laneName'+(i+1)).innerText=getHorseName(i)
 function playVideo(){
 let box=document.getElementById("videoBox")
 let v=document.getElementById("video")
+let bgm=document.getElementById("bgm")
 
 box.style.display="block"
 v.currentTime=0
+
+// ⭐ 關鍵1：影片音量獨立（不影響背景音樂）
+v.volume = 0.6   // 你可以調整：0.3~1
+
+// ⭐ 關鍵2：確保影片一定有聲音
+v.muted = false
+
 v.play()
 
 setTimeout(()=>{
