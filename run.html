@@ -4,42 +4,169 @@
 <meta charset="UTF-8">
 <title>加油!</title>
 <style>
-body{font-family:Arial;text-align:center;background:#eef4ff}
+body{font-family:Arial;text-align:center;background:#f7f7f7;overflow-x:hidden}
+
 h1{margin-top:20px}
+
 #raceArea{width:900px;margin:30px auto;position:relative}
-.lane{border-bottom:2px dashed #bbb;height:90px;position:relative;margin-bottom:10px}
-.horse{font-size:50px;position:absolute;left:0;top:30px;transition:left 1.2s}
-.horseName{position:absolute;left:60px;top:10px;font-weight:bold;color:#333}
-.finish{position:absolute;right:0;top:0;height:100%;width:6px;background:red}
+
+/* 跑道 */
+.lane{
+height:110px;
+position:relative;
+margin-bottom:12px;
+border-radius:10px;
+overflow:hidden;
+background:#f0f0f0;
+}
+
+/* 在跑道內移動的地面 (像小恐龍) */
+.lane::after{
+content:"";
+position:absolute;
+left:0;
+right:0;
+bottom:0;
+height:25px;
+background:repeating-linear-gradient(
+90deg,#444 0,#444 30px,transparent 30px,transparent 60px);
+animation:groundMove 1.2s linear infinite;
+opacity:0.35;
+}
+
+@keyframes groundMove{
+from{background-position-x:0}
+to{background-position-x:-60px}
+}
+
+/* 雲朵 */
+.cloud{
+position:absolute;
+font-size:28px;
+animation:cloudMove 20s linear infinite;
+opacity:0.5;
+}
+
+@keyframes cloudMove{
+from{transform:translateX(900px)}
+to{transform:translateX(-200px)}
+}
+
+/* 仙人掌 */
+.cactus{
+position:absolute;
+bottom:20px;
+font-size:28px;
+animation:cactusMove 6s linear infinite;
+}
+
+@keyframes cactusMove{
+from{transform:translateX(900px)}
+to{transform:translateX(-200px)}
+}
+
+/* 馬與名字 */
+.horseWrap{
+position:absolute;
+left:0;
+top:30px;
+display:flex;
+align-items:center;
+gap:10px;
+transition:left 1.6s ease-out;
+}
+
+.horseName{
+font-weight:bold;
+background:white;
+padding:2px 6px;
+border-radius:6px;
+box-shadow:0 0 3px rgba(0,0,0,0.2);
+}
+
+/* 馬 (有腳動畫) */
+.horse{
+height:70px;
+width:auto;
+display:block;
+}
+
+@keyframes horseRun{
+0%{transform:translateY(0)}
+50%{transform:translateY(-6px)}
+100%{transform:translateY(0)}
+}
+
+
+
+/* 終點旗 */
+.finishFlag{
+position:absolute;
+right:-5px;
+top:-5px;
+font-size:48px;
+}
+
 .controls{margin-top:10px}
+
 input{padding:8px;font-size:16px;width:200px}
+
 button{padding:8px 16px;font-size:16px;margin-left:5px;margin-top:5px}
+
 .count{margin-top:5px;font-size:14px}
+
 .name{margin-bottom:5px}
+
 #winner{font-size:26px;margin-top:25px;color:green}
+
+/* 彩帶 */
+.confetti{
+position:absolute;
+font-size:18px;
+animation:fall 2s linear forwards;
+}
+
+@keyframes fall{
+0%{transform:translateY(-30px)}
+100%{transform:translateY(220px)}
+}
+
 </style>
 </head>
 <body>
 
-<h1>🏇 加油!</h1>
+<h1>🏇加油!</h1>
 <p>先幫每隻馬取名字，再輸入鼓勵的話。鼓勵越多，最後跑越遠！</p>
 
 <div id="raceArea">
-<div class="finish"></div>
+
+<div class="finishFlag">🏁</div>
 
 <div class="lane">
+<div class="cloud" style="top:10px">☁️</div>
+<div class="cactus">🌵</div>
+<div id="wrap1" class="horseWrap">
 <div id="laneName1" class="horseName"></div>
-<div id="horse1" class="horse">🐎</div>
+<img class="horse" src="horse.gif.gif" alt="horse">
+</div>
 </div>
 
 <div class="lane">
+<div class="cloud" style="top:15px;animation-duration:25s">☁️</div>
+<div class="cactus" style="animation-delay:2s">🌵</div>
+<div id="wrap2" class="horseWrap">
 <div id="laneName2" class="horseName"></div>
-<div id="horse2" class="horse">🐎</div>
+<img class="horse" src="horse.gif.gif" alt="horse">
+</div>
 </div>
 
 <div class="lane">
+<div class="cloud" style="top:20px;animation-duration:18s">☁️</div>
+<div class="cactus" style="animation-delay:4s">🌵</div>
+<div id="wrap3" class="horseWrap">
 <div id="laneName3" class="horseName"></div>
-<div id="horse3" class="horse">🐎</div>
+<img class="horse" src="horse.gif.gif" alt="horse">
+</div>
 </div>
 
 </div>
@@ -92,73 +219,74 @@ document.getElementById('laneName'+(i+1)).innerText=name
 }
 
 function encourage(i){
-
 let input=document.getElementById('input'+(i+1))
-
 if(input.value.trim()==='') return
-
 counts[i]++
-
 document.getElementById('count'+(i+1)).innerText=counts[i]
-
 input.value=''
-
 }
 
 function finishRace(){
 
 for(let i=0;i<3;i++){
-  distances[i]=counts[i]*40 + Math.random()*40
+  distances[i]=counts[i]*60
 }
 
 for(let i=0;i<3;i++){
-  let horse=document.getElementById('horse'+(i+1))
-  horse.style.left=distances[i]+'px'
+  let wrap=document.getElementById('wrap'+(i+1))
+  wrap.style.left=distances[i]+'px'
 }
 
 let max=Math.max(...distances)
-
 let winners=[]
+
 for(let i=0;i<distances.length;i++){
-  if(distances[i]===max){
-    winners.push(i)
-  }
+if(distances[i]===max){
+winners.push(i)
+}
 }
 
 let text='🏆 '
 
 if(winners.length===1){
-  text+= getHorseName(winners[0]) +' 獲勝！'
+text+=getHorseName(winners[0])+' 獲勝！'
 }else{
-  text+='平手！ '
-  winners.forEach(w=>{text+= getHorseName(w)+' '})
-  text+='並列第一！'
+text+='平手！ '
+winners.forEach(w=>{text+=getHorseName(w)+' '})
+text+='並列第一！'
 }
 
 setTimeout(()=>{
 
 winners.forEach((w)=>{
 
-let horse=document.getElementById('horse'+(w+1))
+let horse=document.querySelector('#wrap'+(w+1)+' .horse')
+let rect=document.getElementById('wrap'+(w+1)).getBoundingClientRect()
+
+for(let i=0;i<16;i++){
+let conf=document.createElement('div')
+conf.className='confetti'
+conf.innerText='🎉'
+conf.style.left=(rect.left+Math.random()*80)+'px'
+conf.style.top=(rect.top)+'px'
+document.body.appendChild(conf)
+setTimeout(()=>conf.remove(),2000)
+}
+
 let jump=0
-
 let anim=setInterval(()=>{
-
-horse.style.transform='translateY(-20px)'
+horse.style.transform='translateY(-18px)'
 setTimeout(()=>{horse.style.transform='translateY(0)'},200)
-
 jump++
 if(jump>6) clearInterval(anim)
-
-},300)
+},250)
 
 })
 
-},1200)
+},1600)
 
 
 document.getElementById('winner').innerText=text
-
 }
 
 function restartGame(){
@@ -167,9 +295,9 @@ counts=[0,0,0]
 distances=[0,0,0]
 
 for(let i=1;i<=3;i++){
-
-let horse=document.getElementById('horse'+i)
-horse.style.left='0px'
+let wrap=document.getElementById('wrap'+i)
+wrap.style.left='0px'
+let horse=document.querySelector('#wrap'+i+' .horse')
 horse.style.transform='translateY(0)'
 
 document.getElementById('count'+i).innerText=0
@@ -179,12 +307,16 @@ document.getElementById('input'+i).value=''
 document.getElementById('name'+i).value=''
 
 document.getElementById('laneName'+i).innerText=''
-
 }
 
 document.getElementById('winner').innerText=''
-
 }
+
+</script>
+
+</body>
+</html>
+
 
 </script>
 
