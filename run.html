@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -18,7 +19,7 @@ opacity:0.18;z-index:-1;
 #raceArea{width:900px;margin:30px auto;position:relative}
 
 .lane{
-height:110px;
+height:160px;
 position:relative;
 margin-bottom:12px;
 border-radius:10px;
@@ -26,51 +27,54 @@ overflow:hidden;
 background:#f0f0f0;
 }
 
-/* 地面 */
+.lane:nth-child(2){background:#ffdede;}
+.lane:nth-child(3){background:#deffde;}
+.lane:nth-child(4){background:#ddeaff;}
+
 .lane::after{
 content:"";
 position:absolute;
 bottom:0;
-height:25px;
+height:50px;
 left:0;right:0;
 background:repeating-linear-gradient(
 90deg,#444 0,#444 30px,transparent 30px,transparent 60px);
 animation:groundMove 1.2s linear infinite;
 opacity:0.35;
 }
+
 @keyframes groundMove{
 from{background-position-x:0}
 to{background-position-x:-60px}
 }
 
-/* 雲 */
 .cloud{
 position:absolute;
 font-size:28px;
 animation:cloudMove 20s linear infinite;
 opacity:0.5;
 }
+
 @keyframes cloudMove{
 from{transform:translateX(900px)}
 to{transform:translateX(-200px)}
 }
 
-/* 仙人掌 */
 .cactus{
 position:absolute;
 bottom:20px;
 font-size:28px;
 animation:cactusMove 6s linear infinite;
 }
+
 @keyframes cactusMove{
 from{transform:translateX(900px)}
 to{transform:translateX(-200px)}
 }
 
-/* 馬 */
 .horseWrap{
 position:absolute;
-left:0;top:30px;
+left:0;top:10px;
 display:flex;
 align-items:center;
 gap:10px;
@@ -84,7 +88,7 @@ border-radius:6px;
 font-weight:bold;
 }
 
-.horse{height:70px}
+.horse{height:200px}
 
 .finishFlag{
 position:absolute;
@@ -98,9 +102,53 @@ position:absolute;
 font-size:18px;
 animation:fall 2s linear forwards;
 }
+
 @keyframes fall{
 0%{transform:translateY(-30px)}
 100%{transform:translateY(220px)}
+}
+
+/* 勝利馬 */
+.winnerHorse{
+transform:scale(1.4);
+filter:drop-shadow(0 0 20px gold)
+drop-shadow(0 0 40px yellow);
+z-index:1000;
+}
+
+/* 螢幕震動 */
+.shake{
+animation:shakeScreen 0.4s;
+}
+
+@keyframes shakeScreen{
+0%{transform:translate(0,0)}
+20%{transform:translate(-6px,4px)}
+40%{transform:translate(6px,-4px)}
+60%{transform:translate(-5px,3px)}
+80%{transform:translate(5px,-3px)}
+100%{transform:translate(0,0)}
+}
+
+/* JOJO 背景字 */
+.jojoText{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:120px;
+font-weight:bold;
+color:rgba(0,0,0,0.15);
+pointer-events:none;
+z-index:1500;
+letter-spacing:10px;
+animation:jojoFade 1.5s forwards;
+}
+
+@keyframes jojoFade{
+0%{opacity:0;transform:translate(-50%,-70%) scale(0.5)}
+40%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}
+100%{opacity:0;transform:translate(-50%,-40%) scale(1.3)}
 }
 
 /* 音樂 */
@@ -111,17 +159,39 @@ right:10px;
 z-index:999;
 }
 
-/* 🎬 影片 */
+/* 影片 */
 #videoBox{
 position:fixed;
-top:50%;left:50%;
-transform:translate(-50%,-50%);
-display:none;
+top:50%;
+left:-700px;
+transform:translateY(-50%);
 z-index:2000;
+pointer-events:none;
 }
+
 #videoBox video{
 width:500px;
 border-radius:12px;
+}
+
+/* 撞進動畫 */
+.videoCrashIn{
+animation:crashIn 0.45s forwards;
+}
+
+.videoCrashOut{
+animation:crashOut 0.6s forwards;
+}
+
+@keyframes crashIn{
+0%{left:-700px;transform:translateY(-50%) scale(0.4) rotate(-25deg);}
+70%{left:55%;transform:translate(-50%,-50%) scale(1.1) rotate(5deg);}
+100%{left:50%;transform:translate(-50%,-50%) scale(1) rotate(0);}
+}
+
+@keyframes crashOut{
+0%{left:50%;transform:translate(-50%,-50%) scale(1);}
+100%{left:120%;transform:translate(-50%,-50%) scale(0.6) rotate(20deg);}
 }
 
 #winner{font-size:26px;margin-top:20px;color:green}
@@ -148,7 +218,7 @@ border-radius:12px;
 <div class="cactus">🌵</div>
 <div id="wrap1" class="horseWrap">
 <div id="laneName1" class="horseName"></div>
-<img class="horse" src="horse.gif.gif">
+<img class="horse" src="horse1.gif">
 </div>
 </div>
 
@@ -157,7 +227,7 @@ border-radius:12px;
 <div class="cactus" style="animation-delay:2s">🌵</div>
 <div id="wrap2" class="horseWrap">
 <div id="laneName2" class="horseName"></div>
-<img class="horse" src="horse.gif.gif">
+<img class="horse" src="horse2.gif">
 </div>
 </div>
 
@@ -166,7 +236,7 @@ border-radius:12px;
 <div class="cactus" style="animation-delay:4s">🌵</div>
 <div id="wrap3" class="horseWrap">
 <div id="laneName3" class="horseName"></div>
-<img class="horse" src="horse.gif.gif">
+<img class="horse" src="horse3.gif">
 </div>
 </div>
 
@@ -202,8 +272,10 @@ border-radius:12px;
 
 <div id="winner"></div>
 
+<div id="jojo"></div>
+
 <div id="videoBox">
-<video id="video" src="dio.mp4"></video>
+<video id="video"></video>
 </div>
 
 <script>
@@ -211,51 +283,77 @@ border-radius:12px;
 let counts=[0,0,0]
 let distances=[0,0,0]
 
-/* 音樂 */
 let isPlaying=false
 function toggleMusic(){
 let m=document.getElementById("bgm")
 isPlaying?m.pause():m.play()
 isPlaying=!isPlaying
 }
+
 window.addEventListener("click",()=>{
 document.getElementById("bgm").play()
 },{once:true})
 
-/* 名字 */
 function getHorseName(i){
 let name=document.getElementById('name'+(i+1)).value.trim()
 return name||((i+1)+'號馬')
 }
+
 function updateLaneName(i){
 document.getElementById('laneName'+(i+1)).innerText=getHorseName(i)
 }
 
-/* 🎬 影片 */
+/* JOJO背景字 */
+function showJojo(){
+
+let j=document.getElementById("jojo")
+
+let text=document.createElement("div")
+text.className="jojoText"
+text.innerText="ゴゴゴゴゴ"
+
+j.appendChild(text)
+
+setTimeout(()=>{
+text.remove()
+},1500)
+
+}
+
+/* 播放影片 */
 function playVideo(){
+
+let videos=["dio.mp4","dio2.mp4"]
+let randomVideo=videos[Math.floor(Math.random()*videos.length)]
+
 let box=document.getElementById("videoBox")
 let v=document.getElementById("video")
-let bgm=document.getElementById("bgm")
 
-box.style.display="block"
+v.src=randomVideo
 v.currentTime=0
+v.volume=0.6
 
-// ⭐ 關鍵1：影片音量獨立（不影響背景音樂）
-v.volume = 0.6   // 你可以調整：0.3~1
+box.classList.remove("videoCrashOut")
+box.classList.add("videoCrashIn")
 
-// ⭐ 關鍵2：確保影片一定有聲音
-v.muted = false
+showJojo()
+
+document.body.classList.add("shake")
+setTimeout(()=>{
+document.body.classList.remove("shake")
+},400)
 
 v.play()
 
 setTimeout(()=>{
-box.style.display="none"
-v.pause()
-},2000)
+box.classList.remove("videoCrashIn")
+box.classList.add("videoCrashOut")
+},1500)
+
 }
 
-/* 鼓勵（固定距離） */
 function encourage(i){
+
 let input=document.getElementById('input'+(i+1))
 if(input.value.trim()==='') return
 
@@ -264,53 +362,34 @@ document.getElementById('count'+(i+1)).innerText=counts[i]
 
 let step=60
 distances[i]=counts[i]*step
-
 document.getElementById('wrap'+(i+1)).style.left=distances[i]+'px'
 
 input.value=''
 
 playVideo()
+
 }
 
-/* Enter 全部鼓勵 */
+/* Enter鍵 = 所有鼓勵 */
+
 document.addEventListener("keydown",function(e){
+
 if(e.key==="Enter"){
 
 for(let i=0;i<3;i++){
+
 let input=document.getElementById('input'+(i+1))
 
 if(input.value.trim()!==''){
-counts[i]++
-document.getElementById('count'+(i+1)).innerText=counts[i]
-
-let step=60
-distances[i]=counts[i]*step
-document.getElementById('wrap'+(i+1)).style.left=distances[i]+'px'
-
-input.value=''
-}
+encourage(i)
 }
 
-playVideo()
 }
+
+}
+
 })
 
-/* 彩帶 */
-function showConfetti(i){
-let rect=document.getElementById('wrap'+(i+1)).getBoundingClientRect()
-
-for(let j=0;j<15;j++){
-let c=document.createElement('div')
-c.className='confetti'
-c.innerText='🎉'
-c.style.left=(rect.left+Math.random()*80)+'px'
-c.style.top=rect.top+'px'
-document.body.appendChild(c)
-setTimeout(()=>c.remove(),2000)
-}
-}
-
-/* 結算 */
 function finishRace(){
 
 let max=Math.max(...counts)
@@ -319,7 +398,9 @@ let winners=[]
 for(let i=0;i<3;i++){
 if(counts[i]===max){
 winners.push(i)
-showConfetti(i)
+
+document.querySelector("#wrap"+(i+1)+" .horse")
+.classList.add("winnerHorse")
 }
 }
 
@@ -333,10 +414,11 @@ text+=names.join('、')+' 平手！'
 }
 
 document.getElementById('winner').innerText=text
+
 }
 
-/* 重來 */
 function restartGame(){
+
 counts=[0,0,0]
 distances=[0,0,0]
 
@@ -348,8 +430,20 @@ document.getElementById('name'+i).value=''
 document.getElementById('laneName'+i).innerText=''
 }
 
+document.querySelectorAll(".horse").forEach(h=>{
+h.classList.remove("winnerHorse")
+})
+
 document.getElementById('winner').innerText=''
+
 }
+
+</script>
+
+</body>
+</html>
+```
+
 
 </script>
 
