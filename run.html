@@ -95,18 +95,6 @@ right:-5px;top:-5px;
 font-size:48px;
 }
 
-/* 彩帶 */
-.confetti{
-position:absolute;
-font-size:18px;
-animation:fall 2s linear forwards;
-}
-
-@keyframes fall{
-0%{transform:translateY(-30px)}
-100%{transform:translateY(220px)}
-}
-
 /* 勝利馬 */
 .winnerHorse{
 transform:scale(1.4);
@@ -129,7 +117,7 @@ animation:shakeScreen 0.4s;
 100%{transform:translate(0,0)}
 }
 
-/* JOJO 背景字 */
+/* JOJO文字 */
 .jojoText{
 position:fixed;
 top:50%;
@@ -150,14 +138,6 @@ animation:jojoFade 1.5s forwards;
 100%{opacity:0;transform:translate(-50%,-40%) scale(1.3)}
 }
 
-/* 音樂 */
-#musicBtn{
-position:fixed;
-top:10px;
-right:10px;
-z-index:999;
-}
-
 /* 影片 */
 #videoBox{
 position:fixed;
@@ -173,14 +153,9 @@ width:500px;
 border-radius:12px;
 }
 
-/* 撞進動畫 */
-.videoCrashIn{
-animation:crashIn 0.45s forwards;
-}
-
-.videoCrashOut{
-animation:crashOut 0.6s forwards;
-}
+/* 撞擊動畫 */
+.videoCrashIn{animation:crashIn 0.45s forwards;}
+.videoCrashOut{animation:crashOut 0.6s forwards;}
 
 @keyframes crashIn{
 0%{left:-700px;transform:translateY(-50%) scale(0.4) rotate(-25deg);}
@@ -204,7 +179,7 @@ animation:crashOut 0.6s forwards;
 <source src="dance-with-steel-ball-run.mp3">
 </audio>
 
-<button id="musicBtn" onclick="toggleMusic()">🔊</button>
+<button onclick="toggleMusic()">🔊</button>
 
 <h1>🏇加油!</h1>
 
@@ -245,21 +220,18 @@ animation:crashOut 0.6s forwards;
 
 <div>
 名字：<input id="name1" oninput="updateLaneName(0)">
-<input id="input1">
 <button onclick="encourage(0)">鼓勵</button>
 <span id="count1">0</span>
 </div>
 
 <div>
 名字：<input id="name2" oninput="updateLaneName(1)">
-<input id="input2">
 <button onclick="encourage(1)">鼓勵</button>
 <span id="count2">0</span>
 </div>
 
 <div>
 名字：<input id="name3" oninput="updateLaneName(2)">
-<input id="input3">
 <button onclick="encourage(2)">鼓勵</button>
 <span id="count3">0</span>
 </div>
@@ -270,7 +242,6 @@ animation:crashOut 0.6s forwards;
 </div>
 
 <div id="winner"></div>
-
 <div id="jojo"></div>
 
 <div id="videoBox">
@@ -285,6 +256,7 @@ let distances=[0,0,0]
 let isPlaying=false
 function toggleMusic(){
 let m=document.getElementById("bgm")
+m.volume=0.25
 isPlaying?m.pause():m.play()
 isPlaying=!isPlaying
 }
@@ -302,24 +274,15 @@ function updateLaneName(i){
 document.getElementById('laneName'+(i+1)).innerText=getHorseName(i)
 }
 
-/* JOJO背景字 */
 function showJojo(){
-
 let j=document.getElementById("jojo")
-
 let text=document.createElement("div")
 text.className="jojoText"
 text.innerText="ゴゴゴゴゴ"
-
 j.appendChild(text)
-
-setTimeout(()=>{
-text.remove()
-},1500)
-
+setTimeout(()=>{text.remove()},1500)
 }
 
-/* 播放影片 */
 function playVideo(){
 
 let videos=["dio.mp4","dio2.mp4"]
@@ -327,10 +290,13 @@ let randomVideo=videos[Math.floor(Math.random()*videos.length)]
 
 let box=document.getElementById("videoBox")
 let v=document.getElementById("video")
+let bgm=document.getElementById("bgm")
 
 v.src=randomVideo
 v.currentTime=0
-v.volume=0.6
+v.volume=1.0
+
+bgm.volume=0.1
 
 box.classList.remove("videoCrashOut")
 box.classList.add("videoCrashIn")
@@ -338,23 +304,19 @@ box.classList.add("videoCrashIn")
 showJojo()
 
 document.body.classList.add("shake")
-setTimeout(()=>{
-document.body.classList.remove("shake")
-},400)
+setTimeout(()=>{document.body.classList.remove("shake")},400)
 
 v.play()
 
 setTimeout(()=>{
 box.classList.remove("videoCrashIn")
 box.classList.add("videoCrashOut")
+bgm.volume=0.25
 },1500)
 
 }
 
 function encourage(i){
-
-let input=document.getElementById('input'+(i+1))
-if(input.value.trim()==='') return
 
 counts[i]++
 document.getElementById('count'+(i+1)).innerText=counts[i]
@@ -363,31 +325,9 @@ let step=60
 distances[i]=counts[i]*step
 document.getElementById('wrap'+(i+1)).style.left=distances[i]+'px'
 
-input.value=''
-
 playVideo()
 
 }
-
-/* Enter鍵 = 所有鼓勵 */
-
-document.addEventListener("keydown",function(e){
-
-if(e.key==="Enter"){
-
-for(let i=0;i<3;i++){
-
-let input=document.getElementById('input'+(i+1))
-
-if(input.value.trim()!==''){
-encourage(i)
-}
-
-}
-
-}
-
-})
 
 function finishRace(){
 
@@ -397,7 +337,6 @@ let winners=[]
 for(let i=0;i<3;i++){
 if(counts[i]===max){
 winners.push(i)
-
 document.querySelector("#wrap"+(i+1)+" .horse")
 .classList.add("winnerHorse")
 }
@@ -413,7 +352,6 @@ text+=names.join('、')+' 平手！'
 }
 
 document.getElementById('winner').innerText=text
-
 }
 
 function restartGame(){
@@ -424,7 +362,6 @@ distances=[0,0,0]
 for(let i=1;i<=3;i++){
 document.getElementById('wrap'+i).style.left='0px'
 document.getElementById('count'+i).innerText=0
-document.getElementById('input'+i).value=''
 document.getElementById('name'+i).value=''
 document.getElementById('laneName'+i).innerText=''
 }
